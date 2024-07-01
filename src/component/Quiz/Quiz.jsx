@@ -1,25 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import "./Quiz.css";
 import { data } from "../../assets/data";
 
 const Quiz = () => {
   const [index, setIndex] = useState(0); //tracks the current quetion index
-  const [lock, setLock] = useState(false); //prevent multiple answers from being selected
   const [score, setScore] = useState(0); // track the number of the answer
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [answer, setAnswer] = useState(null);
 
-  const checkAnswer = (e, ans) => {
-    setAnswer(ans);
-    if (!lock) {
-      if (answer?.isCorrect) {
+  const checkAnswer = (ans) => {
+    if (answer === null) {
+      setAnswer(ans);
+      if (ans?.isCorrect) {
         setScore(score + 1);
       }
-      setLock(true);
     }
   };
   const nextQuestion = () => {
-    setLock(false);
     setAnswer(null);
     if (index < data.length - 1) {
       setIndex(index + 1);
@@ -42,13 +39,14 @@ const Quiz = () => {
               <li
                 key={ops.id}
                 style={{
-                  background: answer
-                    ? answer?.isCorrect && answer.id === ops.id
-                      ? "#91d691"
-                      : "#ce6363"
-                    : "transparent",
+                  background:
+                    answer && answer?.isCorrect && answer.id === ops.id
+                      ? "#91d691" // green color
+                      : answer && !answer?.isCorrect && answer.id === ops.id
+                      ? "#ce6363"
+                      : "",
                 }}
-                onClick={(e) => checkAnswer(e, ops)}
+                onClick={() => checkAnswer(ops)}
               >
                 {ops.title}
               </li>
